@@ -81,7 +81,7 @@ class DecisionTreeClassifier:
 
         # majority class in this node
         classes, counts = np.unique(y, return_counts=True)
-        majority_class = int(y.mean() >= 0.5)
+        majority_class = classes[np.argmax(counts)]
 
         # stopping conditions
         if (
