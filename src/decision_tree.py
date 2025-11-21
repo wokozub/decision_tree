@@ -7,9 +7,8 @@ from .metrics import gini_impurity, accuracy as accuracy_metric
 class DecisionTreeClassifier:
     """
     decision tree for binary classification
-    - numeric features
-    - Gini impurity
-    - simple stopping rules
+    Supports multi class labels
+    Uses Gini impurity and numeric features
     """
 
     def __init__(self, max_depth=3, min_samples_split=2):
@@ -18,6 +17,8 @@ class DecisionTreeClassifier:
 
         self.root_ = None
         self.n_features_ = None
+        self.classes_ = None       # unique class labels
+        self.n_classes_ = None     # number of classes
 
     # ---------- PUBLIC API ----------
 
@@ -38,10 +39,10 @@ class DecisionTreeClassifier:
         if X.shape[0] != y.shape[0]:
             raise ValueError("X and y must have the same number of samples")
 
-        if not np.isin(y, [0, 1]).all():
-            raise ValueError("MVP: y can only contain classes 0 and 1")
-
         self.n_features_ = X.shape[1]
+        self.classes_ = np.unique(y)
+        self.n_classes_ = self.classes_.shape[0]
+
         self.root_ = self._build_tree(X, y, depth=0)
         return self
 
@@ -62,6 +63,13 @@ class DecisionTreeClassifier:
     def accuracy(self, X, y):
         y_pred = self.predict(X)
         return accuracy_metric(y, y_pred)
+    
+    def score(self, X, y):
+        """
+        Alias for accuracy
+        Same name as in scikit learn classifiers
+        """
+        return self.accuracy(X, y)
 
     # ---------- HELPERS ----------
 
@@ -72,7 +80,8 @@ class DecisionTreeClassifier:
         num_samples = y.shape[0]
 
         # majority class in this node
-        majority_class = int(y.mean() >= 0.5)
+        classes, counts = np.unique(y, return_counts=True)
+        majority_class = classes[np.argmax(counts)]
 
         # stopping conditions
         if (
@@ -80,13 +89,13 @@ class DecisionTreeClassifier:
             or num_samples < self.min_samples_split
             or np.all(y == y[0])
         ):
-            return Node(prediction=majority_class)
+            return Node(prediction=int(majority_class))
 
         # find best split
         best_feature, best_threshold, best_impurity, best_left_mask = self._best_split(X, y)
 
         if best_feature is None:
-            return Node(prediction=majority_class)
+            return Node(prediction=int(majority_class))
 
         left_mask = best_left_mask
         right_mask = ~left_mask
@@ -96,11 +105,11 @@ class DecisionTreeClassifier:
 
         # create a decision node
         return Node(
-            feature_index=best_feature,
+            feature_index=int(best_feature),
             threshold=float(best_threshold),
             left=left_child,
             right=right_child,
-            prediction=majority_class,
+            prediction=int(majority_class),
         )
 
     def _best_split(self, X, y):
