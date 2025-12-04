@@ -13,12 +13,28 @@ Example output:
 
 ```bash
 === Breast cancer dataset ===
-Our tree accuracy    : 0.9181286549707602
-Sklearn tree accuracy: 0.9298245614035088
-Difference           : 0.011695906432748537
+Our tree accuracy          : 0.9181
+Sklearn tree accuracy      : 0.9298
+Accuracy difference        : 0.0117
+
+Our tree train time   [s]  : 2.326839
+Sklearn train time    [s]  : 0.005548
+Train time ratio my/sk     : 419.37
+
+Our tree predict time [s]  : 0.000183
+Sklearn predict time  [s]  : 0.000091
+Predict time ratio my/sk   : 2.02
 
 === Wine dataset ===
-Our tree accuracy    : 0.9444444444444444
-Sklearn tree accuracy: 0.9629629629629629
-Difference           : 0.01851851851851849
+Our tree accuracy          : 0.9444
+Sklearn tree accuracy      : 0.9630
+Accuracy difference        : 0.0185
+
+Our tree train time   [s]  : 0.157467
+Sklearn train time    [s]  : 0.001076
+Train time ratio my/sk     : 146.33
+
+Our tree predict time [s]  : 0.000047
+Sklearn predict time  [s]  : 0.000074
+Predict time ratio my/sk   : 0.64
 ```
