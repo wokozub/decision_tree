@@ -177,3 +177,33 @@ class DecisionTreeClassifier:
                 node = node.right
 
         return node.prediction
+
+    def print_tree(self, feature_names=None):
+        """
+        Print simple if else view of the tree
+        """
+        if self.root_ is None:
+            raise RuntimeError("Call fit() before print_tree()")
+
+        self._print_node(self.root_, depth=0, feature_names=feature_names)
+
+    def _print_node(self, node, depth, feature_names):
+        # indentation for nested levels
+        indent = "  " * depth
+
+        if node.is_leaf:
+            # leaf node, print prediction
+            print(f"{indent}predict {node.prediction}")
+            return
+
+        # name of feature for display
+        if feature_names is not None:
+            name = feature_names[node.feature_index]
+        else:
+            name = f"feature_{node.feature_index}"
+
+        # decision node
+        print(f"{indent}if {name} <= {node.threshold:.3f}:")
+        self._print_node(node.left, depth + 1, feature_names)
+        print(f"{indent}else:")
+        self._print_node(node.right, depth + 1, feature_names)

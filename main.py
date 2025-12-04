@@ -17,6 +17,7 @@ def run_breast_cancer():
     # our tree
     my_tree = DecisionTreeClassifier(max_depth=5, min_samples_split=2)
     my_tree.fit(X_train, y_train)
+    my_tree.print_tree(feature_names=data.feature_names)
     acc_my = my_tree.score(X_test, y_test)
 
     # sklearn tree
